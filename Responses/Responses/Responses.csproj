@@ -49,6 +49,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseDataServiceClient.cs" />
+    <Compile Include="SurveyEditorServiceClient.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SurveyManagementServiceClient.cs" />
   </ItemGroup>
   <ItemGroup>

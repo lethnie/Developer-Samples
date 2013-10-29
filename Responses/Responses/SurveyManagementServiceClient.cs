@@ -1617,10 +1617,11 @@ namespace Checkbox.Wcf.Services.Proxies
             }
         }
     }
-    
+
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="SurveyItemMetaData", Namespace="http://schemas.datacontract.org/2004/07/Checkbox.Wcf.Services.Proxies")]
+    [System.Runtime.Serialization.DataContractAttribute(Name = "SurveyItemMetaData", Namespace="http://schemas.datacontract.org/2004/07/Checkbox.Wcf.Services.Proxies")]
+    //[System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.SurveyItemMetaData))]
     public partial class SurveyItemMetaData : Checkbox.Wcf.Services.Proxies.ItemMetaData
     {
         
@@ -1718,6 +1719,28 @@ namespace Checkbox.Wcf.Services.Proxies
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ItemMetaData", Namespace="http://schemas.datacontract.org/2004/07/Checkbox.Wcf.Services.Proxies")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.SurveyItemMetaData))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfArrayOfPipeSourceVUqw3SxC))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.PipeSource[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.PipeSource))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfboolean))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfstring))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfint))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfArrayOfLocalizedTextValueVUqw3SxC))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.LocalizedTextValue[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.LocalizedTextValue))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfQuestionResultVUqw3SxC))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.QuestionResult))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfanyType))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfSurveyItemMetaDataVUqw3SxC))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.SimpleNameValueCollection))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.SimpleNameValue[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.SimpleNameValue))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.TextData[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.TextData))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.SurveyOptionMetaData[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.SurveyOptionMetaData))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(int[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.SurveyItemMetaData))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.SimpleNameValueCollection))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(Checkbox.Wcf.Services.Proxies.SimpleNameValue[]))]
@@ -4002,7 +4025,7 @@ public interface ISurveyManagementService
     Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfQuestionResultVUqw3SxC IfAlternateUrlIsAvailable(string authTicket, string customUrl, string serverApplicationPath);
     
     [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISurveyManagementService/GetSurveyItemData", ReplyAction="http://tempuri.org/ISurveyManagementService/GetSurveyItemDataResponse")]
-    Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfanyType GetSurveyItemData(string authTicket, int surveyId, int itemId);
+    Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfSurveyItemMetaDataVUqw3SxC/*ServiceOperationResultOfanyType*/ GetSurveyItemData(string authTicket, int surveyId, int itemId);
     
     [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISurveyManagementService/GetConditionDataForSurveyPage", ReplyAction="http://tempuri.org/ISurveyManagementService/GetConditionDataForSurveyPageResponse" +
         "")]
@@ -4197,8 +4220,8 @@ public partial class SurveyManagementServiceClient : System.ServiceModel.ClientB
     {
         return base.Channel.IfAlternateUrlIsAvailable(authTicket, customUrl, serverApplicationPath);
     }
-    
-    public Checkbox.Wcf.Services.Proxies.ServiceOperationResultOfanyType GetSurveyItemData(string authTicket, int surveyId, int itemId)
+
+    public Checkbox.Wcf.Services.Proxies./*ServiceOperationResultOfanyType*/ServiceOperationResultOfSurveyItemMetaDataVUqw3SxC GetSurveyItemData(string authTicket, int surveyId, int itemId)
     {
         return base.Channel.GetSurveyItemData(authTicket, surveyId, itemId);
     }
