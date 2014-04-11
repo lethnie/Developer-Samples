@@ -39,15 +39,20 @@
             this.group1 = this.Factory.CreateRibbonGroup();
             this.btnLogin = this.Factory.CreateRibbonButton();
             this.group2 = this.Factory.CreateRibbonGroup();
-            this.cbSurvey = this.Factory.CreateRibbonComboBox();
+            this.cbSurvey = this.Factory.CreateRibbonDropDown();
             this.btnSurvey = this.Factory.CreateRibbonButton();
             this.group3 = this.Factory.CreateRibbonGroup();
-            this.cbQuestion = this.Factory.CreateRibbonComboBox();
             this.btnChart = this.Factory.CreateRibbonButton();
+            this.groupCrTab = this.Factory.CreateRibbonGroup();
+            this.cbQuestion1 = this.Factory.CreateRibbonDropDown();
+            this.cbQuestion2 = this.Factory.CreateRibbonDropDown();
+            this.btnCrTab = this.Factory.CreateRibbonButton();
+            this.cbQuestion = this.Factory.CreateRibbonDropDown();
             this.tabSurvey.SuspendLayout();
             this.group1.SuspendLayout();
             this.group2.SuspendLayout();
             this.group3.SuspendLayout();
+            this.groupCrTab.SuspendLayout();
             // 
             // tabSurvey
             // 
@@ -55,6 +60,7 @@
             this.tabSurvey.Groups.Add(this.group1);
             this.tabSurvey.Groups.Add(this.group2);
             this.tabSurvey.Groups.Add(this.group3);
+            this.tabSurvey.Groups.Add(this.groupCrTab);
             this.tabSurvey.Label = "Survey Tools";
             this.tabSurvey.Name = "tabSurvey";
             // 
@@ -84,7 +90,6 @@
             // 
             this.cbSurvey.Label = " ";
             this.cbSurvey.Name = "cbSurvey";
-            this.cbSurvey.Text = null;
             // 
             // btnSurvey
             // 
@@ -101,12 +106,6 @@
             this.group3.Label = "Chart";
             this.group3.Name = "group3";
             // 
-            // cbQuestion
-            // 
-            this.cbQuestion.Label = " ";
-            this.cbQuestion.Name = "cbQuestion";
-            this.cbQuestion.Text = null;
-            // 
             // btnChart
             // 
             this.btnChart.Image = ((System.Drawing.Image)(resources.GetObject("btnChart.Image")));
@@ -114,6 +113,37 @@
             this.btnChart.Name = "btnChart";
             this.btnChart.ShowImage = true;
             this.btnChart.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnChart_Click);
+            // 
+            // groupCrTab
+            // 
+            this.groupCrTab.Items.Add(this.cbQuestion1);
+            this.groupCrTab.Items.Add(this.cbQuestion2);
+            this.groupCrTab.Items.Add(this.btnCrTab);
+            this.groupCrTab.Label = "Cross Table";
+            this.groupCrTab.Name = "groupCrTab";
+            // 
+            // cbQuestion1
+            // 
+            this.cbQuestion1.Label = " ";
+            this.cbQuestion1.Name = "cbQuestion1";
+            // 
+            // cbQuestion2
+            // 
+            this.cbQuestion2.Label = " ";
+            this.cbQuestion2.Name = "cbQuestion2";
+            // 
+            // btnCrTab
+            // 
+            this.btnCrTab.Image = ((System.Drawing.Image)(resources.GetObject("btnCrTab.Image")));
+            this.btnCrTab.Label = "Get Cross Table";
+            this.btnCrTab.Name = "btnCrTab";
+            this.btnCrTab.ShowImage = true;
+            this.btnCrTab.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnCrTab_Click);
+            // 
+            // cbQuestion
+            // 
+            this.cbQuestion.Label = " ";
+            this.cbQuestion.Name = "cbQuestion";
             // 
             // SurveyRibbon
             // 
@@ -129,6 +159,8 @@
             this.group2.PerformLayout();
             this.group3.ResumeLayout(false);
             this.group3.PerformLayout();
+            this.groupCrTab.ResumeLayout(false);
+            this.groupCrTab.PerformLayout();
 
         }
 
@@ -139,10 +171,14 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnLogin;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnSurvey;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group2;
-        internal Microsoft.Office.Tools.Ribbon.RibbonComboBox cbSurvey;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group3;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnChart;
-        internal Microsoft.Office.Tools.Ribbon.RibbonComboBox cbQuestion;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup groupCrTab;
+        internal Microsoft.Office.Tools.Ribbon.RibbonDropDown cbQuestion1;
+        internal Microsoft.Office.Tools.Ribbon.RibbonDropDown cbQuestion2;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnCrTab;
+        internal Microsoft.Office.Tools.Ribbon.RibbonDropDown cbSurvey;
+        internal Microsoft.Office.Tools.Ribbon.RibbonDropDown cbQuestion;
 
     }
 

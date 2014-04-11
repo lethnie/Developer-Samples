@@ -8,12 +8,13 @@ using Excel = Microsoft.Office.Interop.Excel;
 using Office = Microsoft.Office.Core;
 using Microsoft.Office.Tools.Excel;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Configuration;
 
 namespace ResponsesExportExcel
 {  
     public partial class SurveyRibbon
-    {
-        ClientInfo clientInfo;
+    {        
         AuthenticationServiceClient authClient;
         SurveyManagementServiceClient surveyClient;
         ResponseDataServiceClient responseDataClient;
@@ -24,12 +25,15 @@ namespace ResponsesExportExcel
         Excel.Worksheet surveySheet;
 
         private void SampleRibbon_Load(object sender, RibbonUIEventArgs e)
+        {           
+            surveySheet = Globals.ThisAddIn.Application.ActiveSheet;
+        }
+
+        private void setServices()
         {
             surveyClient = new SurveyManagementServiceClient("BasicHttpBinding_ISurveyManagementService");
             responseDataClient = new ResponseDataServiceClient("BasicHttpBinding_IResponseDataService");
             authClient = new AuthenticationServiceClient("BasicHttpBinding_IAuthenticationService");
-
-            surveySheet = Globals.ThisAddIn.Application.ActiveSheet;
         }
 
         private void btnLogin_Click(object sender, RibbonControlEventArgs e)
@@ -37,16 +41,18 @@ namespace ResponsesExportExcel
             FormLogin formLogin = new FormLogin();
             formLogin.ShowDialog();
             if (formLogin.DialogResult == System.Windows.Forms.DialogResult.OK)
-            {              
-                clientInfo = formLogin.getLoginInfo();
-                
+            {
+                ClientInfo clientInfo = formLogin.getLoginInfo();
+
+                setXmlFile(clientInfo.name);
+                setServices();
                 authTicket = authClient.Login(clientInfo.name, clientInfo.password);
                 if (authTicket == null || string.IsNullOrWhiteSpace(authTicket.ResultData))
                 {
                     System.Windows.Forms.MessageBox.Show("Wrong login or password.");
                     authTicket = null;
                 }
-                var listSurveys = surveyClient.ListAvailableSurveys(authTicket.ResultData, 0, 10, "", true, "", "");
+                var listSurveys = surveyClient.ListAvailableSurveys(authTicket.ResultData, 0, 30, "", true, "", "");
                 cbSurvey.Items.Clear();
                 for (int i = 0; i < listSurveys.ResultData.TotalItemCount; i++)
                 {
@@ -59,7 +65,21 @@ namespace ResponsesExportExcel
             
         }
 
+        private void setXmlFile(String name)
+        {
+            String userName = name.Substring(0, name.IndexOf('@'));
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            XmlNodeList endpoints = xmlDoc.GetElementsByTagName("endpoint");
+            foreach (XmlNode endpoint in endpoints)
+            {
+                endpoint.Attributes["address"].Value = endpoint.Attributes["address"].Value.Replace("dev.checkbox".ToString(), userName + ".checkboxonline");
+            }
 
+            xmlDoc.Save(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+
+            ConfigurationManager.RefreshSection("endpoint");
+        }
 
         private void btnSurvey_Click(object sender, RibbonControlEventArgs e)
         {
@@ -73,7 +93,19 @@ namespace ResponsesExportExcel
                 System.Windows.Forms.MessageBox.Show("You must select the survey first.");
                 return;
             }
-            getAnswersBySurveyName(cbSurvey.Text);
+            getAnswersBySurveyName(cbSurvey.SelectedItem.ToString());
+            cbQuestion1.Items.Clear();
+            cbQuestion2.Items.Clear();
+            for (int i = 0; i < cbQuestion.Items.Count; i++)
+            {
+                RibbonDropDownItem item = this.Factory.CreateRibbonDropDownItem();
+                item.Label = cbQuestion.Items[i].Label;
+                cbQuestion1.Items.Add(item);
+                item = this.Factory.CreateRibbonDropDownItem();
+                item.Label = cbQuestion.Items[i].Label;
+                cbQuestion2.Items.Add(item);
+            }
+            surveySheet = Globals.ThisAddIn.Application.ActiveSheet;
         }
 
         private string getNextColumn(string name)
@@ -112,7 +144,6 @@ namespace ResponsesExportExcel
         private void getAnswersBySurveyName(string surveyName)
         {
             Excel.Worksheet activeSheet = (Excel.Worksheet)Globals.ThisAddIn.Application.ActiveSheet;
-
 
             string column = "A";
             int row = 1;
@@ -154,7 +185,6 @@ namespace ResponsesExportExcel
             column = getNextColumn(column);
             activeSheet.Range[column + row.ToString()].Value2 = "Invitee";
             column = getNextColumn(column);
-            //firstColumn = column;
 
             List<int> itemIds = new List<int>();
 
@@ -412,11 +442,12 @@ namespace ResponsesExportExcel
 
         private void btnChart_Click(object sender, RibbonControlEventArgs e)
         {      
-            getAnswersChart(questions[cbQuestion.Text]);
+            getAnswersChart(cbQuestion.SelectedItem.ToString());
         }
 
-        private void getAnswersChart(string numColumn)
+        private void getAnswersChart(string ans)
         {
+            string numColumn = questions[ans];
             Dictionary<string, int> answers = new Dictionary<string, int>();
             
             string title = surveySheet.Range[numColumn + "1"].Value2.ToString();
@@ -442,7 +473,10 @@ namespace ResponsesExportExcel
 
             Excel.Worksheet activeSheet = Globals.ThisAddIn.Application.Sheets.Add();
 
-            int k = 1;
+            int k = 2;
+            activeSheet.Range["A1"].Value2 = ans;
+            activeSheet.Range["B1"].Value2 = "Count";
+
             foreach (var answer in answers)
             {
                 activeSheet.Range["A" + (k).ToString()].Value2 =
@@ -452,7 +486,7 @@ namespace ResponsesExportExcel
                 k++;
             }           
 
-            Excel.Range data = Globals.ThisAddIn.Application.ActiveSheet.Range["A1", "B" + (answers.Count).ToString()];
+            Excel.Range data = Globals.ThisAddIn.Application.ActiveSheet.Range["A2", "B" + (answers.Count + 1).ToString()];
             Excel.Chart myNewChart =
             Globals.ThisAddIn.Application.ActiveSheet.Shapes.AddChart(XlChartType: Excel.XlChartType.xl3DPie,
                     Left: Type.Missing, Top: Type.Missing, Width: Type.Missing,
@@ -461,6 +495,104 @@ namespace ResponsesExportExcel
             myNewChart.SetSourceData(data, Excel.XlRowCol.xlColumns);
             myNewChart.SetElement(Office.MsoChartElementType.msoElementChartTitleAboveChart);
             myNewChart.ChartTitle.Text = title;
+        }
+
+        private void btnCrTab_Click(object sender, RibbonControlEventArgs e)
+        {
+            string numCol1 = questions[cbQuestion1.SelectedItem.Label];
+            string numCol2 = questions[cbQuestion2.SelectedItem.Label];
+            getAnswersCrossTable(numCol1, numCol2);
+        }
+
+        private void getAnswersCrossTable(string numCol1, string numCol2)
+        {
+            Dictionary<string, Dictionary<string, int>> answers = new Dictionary<string, Dictionary<string, int>>();
+
+            string title = surveySheet.Range[numCol1 + "1"].Value2.ToString() + " " +
+                surveySheet.Range[numCol2 + "1"].Value2.ToString();
+            for (int i = 2; i <= rowCount; i++)
+            {
+                string key;
+                if (surveySheet.Range[numCol1 + i.ToString()].Value2 == null)
+                    key = "";
+                else
+                    key = surveySheet.Range[numCol1 + i.ToString()].Value2.ToString();
+                if (key != "")
+                {
+                    string key2;
+                    if (surveySheet.Range[numCol2 + i.ToString()].Value2 == null)
+                        key2 = "";
+                    else
+                        key2 = surveySheet.Range[numCol2 + i.ToString()].Value2.ToString();
+
+                    if (answers.ContainsKey(key))
+                    {
+                        if (key2 != "")
+                        {
+                            if (answers[key].ContainsKey(key2))
+                            {
+                                answers[key][key2]++;
+                            }
+                            else
+                            {
+                                answers[key].Add(key2, 1);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Dictionary<string, int> val = new Dictionary<string, int>();
+                        if (key2 != "" )
+                            val.Add(key2, 1);
+                        answers.Add(key, val);
+                    }
+                }
+            }
+
+            Excel.Worksheet activeSheet = Globals.ThisAddIn.Application.Sheets.Add();
+
+            int k = 2;
+            Dictionary<string, string> ans_col = new Dictionary<string, string>();
+            string freeCol = "B";
+            foreach (var answer in answers)
+            {
+                activeSheet.Range["A" + (k).ToString()].Value2 =
+                        '"'.ToString() + answer.Key.ToString() + '"'.ToString();
+                foreach (var ans in answer.Value)
+                {
+                    string col = "B";
+                    while (!col.Equals(freeCol))
+                    {
+                        activeSheet.Range[col + (k).ToString()].Value2 =
+                            0;
+                        col = getNextColumn(col);
+                    }
+                    if (ans_col.ContainsKey(ans.Key))
+                    {                    
+                        activeSheet.Range[ans_col[ans.Key] + (k).ToString()].Value2 =
+                            ans.Value;
+                    }
+                    else
+                    {
+                        ans_col.Add(ans.Key, freeCol);
+                        if (k > 2)
+                        {                            
+                            for (int i = 2; i < k; i++)
+                            {
+                                activeSheet.Range[ans_col[ans.Key] + (i).ToString()].Value2 =
+                                    0;
+                            }
+                        }
+                        freeCol = getNextColumn(freeCol);
+                        activeSheet.Range[ans_col[ans.Key] + "1"].Value2 =
+                            '"'.ToString() + ans.Key.ToString() + '"'.ToString();
+                        activeSheet.Range[ans_col[ans.Key] + (k).ToString()].Value2 =
+                            ans.Value;
+                        
+                    }
+                }
+                k++;
+            }
         }
 
     }
